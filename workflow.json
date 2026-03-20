@@ -1,0 +1,52 @@
+{
+  "name": "Telegram Bot with OpenAI - Simple Example",
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{"node": "Call OpenAI", "type": "main", "index": 0}]]
+    },
+    "Call OpenAI": {
+      "main": [[{"node": "Send Reply", "type": "main", "index": 0}]]
+    }
+  },
+  "nodes": [
+    {
+      "id": "telegram_trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "parameters": {
+        "updates": ["message"]
+      }
+    },
+    {
+      "id": "http_request",
+      "name": "Call OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [500, 300],
+      "parameters": {
+        "url": "=https://api.openai.com/v1/chat/completions",
+        "method": "POST",
+        "headers": {
+          "Authorization": "=Bearer $secrets.OPENAI_API_KEY",
+          "Content-Type": "application/json"
+        },
+        "body": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a helpful Telegram bot. Answer briefly.\"},\n    {\"role\": \"user\", \"content\": $json.message}\n  ],\n  \"max_tokens\": 150\n}"
+      }
+    },
+    {
+      "id": "telegram_send",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [750, 300],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "=$node[\"Telegram Trigger\"].json.chatId",
+        "text": "=$json.body.choices[0].message.content"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST \"https://diavola.app.n8n.cloud/mcp-server/http\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjY4ZTUwMi01NmYxLTQxMTgtOWE5My0zNjQ0NGMwNzdiOGEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6IjYxMzJiNzM5LTlkZjYtNGIyNy05NTUwLTQzMGYxMTQyOWNlOCIsImlhdCI6MTc3MzU4OTExOH0.-RVUkEgUyKWnryGkzhCpzcq9sK5aSNf6RRPmzslcr34\" -H \"Content-Type: application/json\" -H \"Accept: application/json, text/event-stream\" -d '{\"\"jsonrpc\"\":\"\"2.0\"\",\"\"method\"\":\"\"tools/list\"\",\"\"params\"\":{},\"\"id\"\":1}')",
+      "Bash(npx @playwright/mcp@latest --version)"
+    ]
+  }
+}

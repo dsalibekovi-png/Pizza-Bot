@@ -1,0 +1,261 @@
+{
+  "name": "Telegram AI Chatbot — Voice + Text",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "node-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "webhookId": "voice-bot-main",
+      "credentials": {
+        "telegramBotApi": { "id": "1", "name": "Telegram Bot Token" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.voice ? 'voice' : 'text' }}",
+              "value2": "voice"
+            }
+          ]
+        }
+      },
+      "id": "node-if-voice",
+      "name": "Is Voice?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ⚠️ ВОЙДИ В n8n → Credentials → Telegram Bot Token → скопируй токен сюда:\nconst BOT_TOKEN = '8385465224:AAE7k1qxCjJ8SKG2BXleFPqaJIUPWJRF7NQ';\n\nconst message = $('Telegram Trigger').first().json.message;\nconst fileId = message.voice.file_id;\n\n// 1. Получаем путь к файлу\nconst fileInfo = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`,\n  json: true,\n});\nif (!fileInfo.ok) throw new Error('getFile failed: ' + JSON.stringify(fileInfo));\n\nconst filePath = fileInfo.result.file_path;\n\n// 2. Скачиваем файл как бинарные данные\nconst fileBuffer = await this.helpers.request({\n  method: 'GET',\n  url: `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`,\n  encoding: null,\n});\n\nconst binaryData = await this.helpers.prepareBinaryData(\n  fileBuffer,\n  'voice.oga',\n  'audio/ogg'\n);\n\nreturn [{\n  json: { chatId: message.chat.id },\n  binary: { voiceFile: binaryData }\n}];"
+      },
+      "id": "node-download-voice",
+      "name": "Download Voice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "model", "value": "whisper-1" },
+            { "name": "language", "value": "fr" },
+            { "parameterType": "formBinaryData", "name": "file", "inputDataFieldName": "voiceFile" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-whisper",
+      "name": "Whisper Transcribe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 100],
+      "credentials": {
+        "openAiApi": { "id": "2", "name": "OpenAI API" }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "Tu es l'assistant virtuel d'Istante Pizza à Grenoble. Tu réponds UNIQUEMENT aux questions concernant Istante Pizza : menu, horaires, adresse, ingrédients, allergènes, commandes. Si quelqu'un pose une question sans rapport avec le restaurant, réponds poliment que tu es uniquement là pour aider avec Istante Pizza.\n\n=== BASE DE CONNAISSANCE ISTANTE PIZZA ===\n\n📍 ADRESSE : 30 Rue du Docteur Calmette, 38000 Grenoble\n📞 TÉLÉPHONE : 04 38 49 27 35\n🛵 LIVRAISON : Uber Eats\n\n🕐 HORAIRES\n- Lundi : Fermé\n- Mardi au Samedi : midi et soir\n- Dimanche : soir uniquement\n\n🏆 MEILLEURES VENTES\n- Arménienne — 13€\n- Margherita — 10€\n- Reine — 12€\n\n✨ CRÉATIONS MAISON\n- Alla Burrata — 15€\n- Ave, César ! — 14€\n- Nathalie — 15€\n\n🇬🇪 SPÉCIALITÉS GÉORGIENNES\n- Adjarouli — 15€\n- Megrouli — 15€\n- Koubdari — 16€\n\n🍅 PIZZAS BASE TOMATE\n- 4 Fromages — 13€ (Mozza, Chèvre, Raclette, Gorgonzola)\n- Napolitaine — 12€ (Mozza, Anchois, Câpres)\n- Diavola — 12€ (Mozza, Salami italien épicé, Oignon Rouge, Olives)\n- Bolognaise — 13€ (Mozza, Viande Hachée, Oignon Rouge, Persillade, Parmesan)\n- Orientale — 13€ (Mozza, Merguez, Poivrons, Œuf)\n- Andalouse — 13€ (Mozza, Salami épicé, Poivrons, Olives)\n- Grenobloise — 14€ (Mozza, Jambon Blanc, Champignons, Roquefort, Noix)\n- Fresh — 13€ (Mozza, Tomates Cerises, Jambon serrano, Parmesan, Basilic)\n- Thon — 13€ (Mozza, Tomate Cerise, Oignon, Thon)\n- Végétarienne — 14€ (Mozza, Champignons, Poivrons, Tomates Cerises, Oignon, Roquette)\n- Spicy — 14€ (Mozza, Viande Hachée, Cheddar, Piment jalapeño, Crispy oignon)\n- Calzone Napoletano — 13€ (Mozza, Jambon blanc, Champignons, Œuf)\n\n🥛 PIZZAS BASE CRÈME\n- Chèvre Miel — 12€ (Mozza, Chèvre, Miel, Noix)\n- Savoyarde — 13€ (Mozza, Raclette, Reblochon, Oignon, Jambon Serrano)\n- Gallina — 13€ (Mozza, Champignons, Poulet, Olives, Oignon)\n- Ravioles — 13€ (Mozza, Ravioles à l'ancienne)\n- Forestière — 12€ (Mozza, Champignons, Ail, Estragon)\n- Tartiflette — 14€ (Mozza, Pomme de terre, Lardon, Reblochon, Oignon)\n- Alsacienne — 12€ (Mozza, Lardon, Oignon)\n- Norvégienne — 14€ (Mozza, Saumon Fumé, Aneth, Sésame, Citron)\n\n➕ SUPPLÉMENTS\n- Fromage +2€ | Viande +3€ | Légumes +1€ | Burrata +5€\n\n🥩 VIANDES : Halal (bœuf, poulet, merguez)\n\n=== FIN BASE DE CONNAISSANCE ===\n\nRéponds toujours en français, de façon chaleureuse et concise. Pour les réponses vocales, évite les emojis et les listes à puces — parle naturellement."
+        }
+      },
+      "id": "node-agent-voice",
+      "name": "AI Agent (Voice)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [880, 100]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "node-openai-voice",
+      "name": "OpenAI Voice",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [780, 300],
+      "credentials": {
+        "openAiApi": { "id": "2", "name": "OpenAI API" }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "node-memory-voice",
+      "name": "Memory Voice",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/O31r762Gb3WFygrEOGh0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "xi-api-key", "value": "sk_189ca4f8f0527eb183cc65c4d300ec14b58ba1e4f8dc8c5a" },
+            { "name": "Accept", "value": "audio/mpeg" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $json.output, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.5, similarity_boost: 0.75 } }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "node-elevenlabs",
+      "name": "ElevenLabs TTS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot8385465224:AAE7k1qxCjJ8SKG2BXleFPqaJIUPWJRF7NQ/sendVoice",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "chat_id", "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}" },
+            { "parameterType": "formBinaryData", "name": "voice", "inputDataFieldName": "data" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-send-voice",
+      "name": "Send Voice Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 100]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "Tu es l'assistant virtuel d'Istante Pizza à Grenoble. Tu réponds UNIQUEMENT aux questions concernant Istante Pizza : menu, horaires, adresse, ingrédients, allergènes, commandes. Si quelqu'un pose une question sans rapport avec le restaurant, réponds poliment que tu es uniquement là pour aider avec Istante Pizza.\n\n=== BASE DE CONNAISSANCE ISTANTE PIZZA ===\n\n📍 ADRESSE : 30 Rue du Docteur Calmette, 38000 Grenoble\n📞 TÉLÉPHONE : 04 38 49 27 35\n🛵 LIVRAISON : Uber Eats\n\n🕐 HORAIRES\n- Lundi : Fermé\n- Mardi au Samedi : midi et soir\n- Dimanche : soir uniquement\n\n🏆 MEILLEURES VENTES\n- Arménienne — 13€\n- Margherita — 10€\n- Reine — 12€\n\n✨ CRÉATIONS MAISON\n- Alla Burrata — 15€\n- Ave, César ! — 14€\n- Nathalie — 15€\n\n🇬🇪 SPÉCIALITÉS GÉORGIENNES\n- Adjarouli — 15€\n- Megrouli — 15€\n- Koubdari — 16€\n\n🍅 PIZZAS BASE TOMATE\n- 4 Fromages — 13€ (Mozza, Chèvre, Raclette, Gorgonzola)\n- Napolitaine — 12€ (Mozza, Anchois, Câpres)\n- Diavola — 12€ (Mozza, Salami italien épicé, Oignon Rouge, Olives)\n- Bolognaise — 13€ (Mozza, Viande Hachée, Oignon Rouge, Persillade, Parmesan)\n- Orientale — 13€ (Mozza, Merguez, Poivrons, Œuf)\n- Andalouse — 13€ (Mozza, Salami épicé, Poivrons, Olives)\n- Grenobloise — 14€ (Mozza, Jambon Blanc, Champignons, Roquefort, Noix)\n- Fresh — 13€ (Mozza, Tomates Cerises, Jambon serrano, Parmesan, Basilic)\n- Thon — 13€ (Mozza, Tomate Cerise, Oignon, Thon)\n- Végétarienne — 14€ (Mozza, Champignons, Poivrons, Tomates Cerises, Oignon, Roquette)\n- Spicy — 14€ (Mozza, Viande Hachée, Cheddar, Piment jalapeño, Crispy oignon)\n- Calzone Napoletano — 13€ (Mozza, Jambon blanc, Champignons, Œuf)\n\n🥛 PIZZAS BASE CRÈME\n- Chèvre Miel — 12€ (Mozza, Chèvre, Miel, Noix)\n- Savoyarde — 13€ (Mozza, Raclette, Reblochon, Oignon, Jambon Serrano)\n- Gallina — 13€ (Mozza, Champignons, Poulet, Olives, Oignon)\n- Ravioles — 13€ (Mozza, Ravioles à l'ancienne)\n- Forestière — 12€ (Mozza, Champignons, Ail, Estragon)\n- Tartiflette — 14€ (Mozza, Pomme de terre, Lardon, Reblochon, Oignon)\n- Alsacienne — 12€ (Mozza, Lardon, Oignon)\n- Norvégienne — 14€ (Mozza, Saumon Fumé, Aneth, Sésame, Citron)\n\n➕ SUPPLÉMENTS\n- Fromage +2€ | Viande +3€ | Légumes +1€ | Burrata +5€\n\n🥩 VIANDES : Halal (bœuf, poulet, merguez)\n\n=== FIN BASE DE CONNAISSANCE ===\n\nRéponds toujours en français, de façon chaleureuse et concise."
+        }
+      },
+      "id": "node-agent-text",
+      "name": "AI Agent (Text)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [440, 500]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "node-openai-text",
+      "name": "OpenAI Text",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [340, 700],
+      "credentials": {
+        "openAiApi": { "id": "2", "name": "OpenAI API" }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "node-memory-text",
+      "name": "Memory Text",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [440, 700]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "id": "node-send-text",
+      "name": "Send Text Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [660, 500],
+      "credentials": {
+        "telegramBotApi": { "id": "1", "name": "Telegram Bot Token" }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{ "node": "Is Voice?", "type": "main", "index": 0 }]]
+    },
+    "Is Voice?": {
+      "main": [
+        [{ "node": "Download Voice", "type": "main", "index": 0 }],
+        [{ "node": "AI Agent (Text)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Download Voice": {
+      "main": [[{ "node": "Whisper Transcribe", "type": "main", "index": 0 }]]
+    },
+    "Whisper Transcribe": {
+      "main": [[{ "node": "AI Agent (Voice)", "type": "main", "index": 0 }]]
+    },
+    "AI Agent (Voice)": {
+      "main": [[{ "node": "ElevenLabs TTS", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Voice": {
+      "ai_languageModel": [[{ "node": "AI Agent (Voice)", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Memory Voice": {
+      "ai_memory": [[{ "node": "AI Agent (Voice)", "type": "ai_memory", "index": 0 }]]
+    },
+    "ElevenLabs TTS": {
+      "main": [[{ "node": "Send Voice Reply", "type": "main", "index": 0 }]]
+    },
+    "AI Agent (Text)": {
+      "main": [[{ "node": "Send Text Reply", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Text": {
+      "ai_languageModel": [[{ "node": "AI Agent (Text)", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Memory Text": {
+      "ai_memory": [[{ "node": "AI Agent (Text)", "type": "ai_memory", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

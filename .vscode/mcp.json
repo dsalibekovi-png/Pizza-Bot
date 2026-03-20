@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "n8n-mcp": {
+      "type": "http",
+      "url": "https://diavola.app.n8n.cloud/mcp-server/http",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjY4ZTUwMi01NmYxLTQxMTgtOWE5My0zNjQ0NGMwNzdiOGEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6ImRhZThjNDk2LThlODktNDIyZS04N2RmLWM0M2IxNWMyY2YwOSIsImlhdCI6MTc3Mzc3MDQ2NX0.MIRLX08bkYNc7pF7nZqA5mxRBiGAZT6gibCfzOLHXCM"
+      }
+    }
+  }
+}
