@@ -25,7 +25,7 @@ app.post("/webhook/order", async (req, res) => {
   const phone = req.body.phone;
   const total = req.body.total;
 
-  const message = "<b>НОВЫЙ ЗАКАЗ!</b>\n\nЗаказ: " + items + "\nАдрес: " + address + "\nТелефон: " + phone + "\nСумма: " + total + " EUR";
+  const message = "<b>NOUVELLE COMMANDE!</b>\n\nCommande: " + items + "\nAdresse: " + address + "\nTelephone: " + phone + "\nTotal: " + total + " EUR";
 
   await sendToTelegram(message);
   res.json({ success: true });
