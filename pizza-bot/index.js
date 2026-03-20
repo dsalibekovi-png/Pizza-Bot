@@ -20,13 +20,13 @@ async function sendToTelegram(message) {
 }
 
 app.post("/webhook/order", async (req, res) => {
+  const name = req.body.name;
   const items = req.body.items;
-  const address = req.body.address;
+  const type = req.body.type;
   const phone = req.body.phone;
   const total = req.body.total;
-  const name = req.body.name;
 
-  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nAdresse: " + address + "\nTelephone: " + phone + "\nTotal: " + total + " EUR";
+  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€";
 
   await sendToTelegram(message);
   res.json({ success: true });
