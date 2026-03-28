@@ -37,14 +37,15 @@ async function createSumUpPaymentLink(name, total) {
 
 
 async function getOrCreateContact(phone, name, pizza_count) {
-  const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone) + "?includeAttributes=true", {
+  const phoneClean = phone.replace(/^\+/, "");
+  const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phoneClean) + "?includeAttributes=true", {
     headers: { "api-key": BREVO_API_KEY },
   });
 
   if (search.ok) {
     const contact = await search.json();
     const newCount = (contact.attributes.ORDER_COUNT || 0) + pizza_count;
-    await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
+    await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phoneClean), {
       method: "PUT",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({ attributes: { ORDER_COUNT: newCount } }),
