@@ -6,6 +6,25 @@ const TELEGRAM_TOKEN = "8385465224:AAE7k1qxCjJ8SKG2BXleFPqaJIUPWJRF7NQ";
 const TELEGRAM_CHAT_ID = "-5161585152";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const SUMUP_API_KEY = process.env.SUMUP_API_KEY;
+
+async function createSumUpPaymentLink(name, total) {
+  const response = await fetch("https://api.sumup.com/v0.1/checkouts", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + SUMUP_API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      checkout_reference: "order-" + Date.now(),
+      amount: parseFloat(total),
+      currency: "EUR",
+      description: "Istante Pizza - " + name,
+    }),
+  });
+  const data = await response.json();
+  return data.id ? "https://pay.sumup.com/b2c/checkout/" + data.id : null;
+}
 
 
 
@@ -43,7 +62,8 @@ app.post("/webhook/order", async (req, res) => {
   await sendToTelegram(message);
 
   if (phone) {
-    const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\nTel: 04 38 49 27 35`;
+    const paymentLink = await createSumUpPaymentLink(name, total);
+    const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\n${paymentLink ? "Paiement: " + paymentLink + "\n" : ""}Tel: 04 38 49 27 35`;
     await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
       method: "POST",
       headers: {
