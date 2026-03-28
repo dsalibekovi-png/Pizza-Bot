@@ -45,7 +45,7 @@ app.post("/webhook/order", async (req, res) => {
   await sendToTelegram(message);
 
   if (phone) {
-    const sms = `Merci ${name} ! 🍕\nVotre commande a bien été reçue.\n\n📋 ${items}\n🏠 Type: ${type}\n💶 Total: ${total}€\n\nIstante Pizza — 04 38 49 27 35`;
+    const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\nTel: 04 38 49 27 35`;
     await twilioClient.messages.create({ body: sms, from: TWILIO_FROM, to: phone });
   }
 
