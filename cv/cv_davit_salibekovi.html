@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CV — Davit Salibekovi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f0f0;
+      color: #222;
+      font-size: 13px;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      margin: 20px auto;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 72mm 1fr;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    /* ── LEFT COLUMN ── */
+    .left {
+      background: #1a2a3a;
+      color: #e8e8e8;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .photo-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .photo {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid #e07b39;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-placeholder {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px dashed #e07b39;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .left-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #e07b39;
+      border-bottom: 1px solid #e07b39;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 7px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .contact-icon {
+      font-size: 13px;
+      min-width: 16px;
+      margin-top: 1px;
+    }
+
+    .skill-bar-wrap {
+      margin-bottom: 9px;
+    }
+
+    .skill-label {
+      font-size: 11.5px;
+      margin-bottom: 3px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .skill-level {
+      font-size: 10px;
+      color: #aaa;
+    }
+
+    .skill-bar-bg {
+      background: #2e4057;
+      border-radius: 3px;
+      height: 5px;
+    }
+
+    .skill-bar-fill {
+      background: #e07b39;
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    .lang-item {
+      margin-bottom: 9px;
+    }
+
+    .lang-name {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .lang-level {
+      font-size: 10px;
+      color: #aaa;
+    }
+
+    .lang-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: 3px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #2e4057;
+    }
+
+    .dot.filled {
+      background: #e07b39;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #2e4057;
+      color: #ccc;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      margin: 3px 3px 0 0;
+    }
+
+    /* ── RIGHT COLUMN ── */
+    .right {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .name-block {
+      border-bottom: 3px solid #e07b39;
+      padding-bottom: 12px;
+    }
+
+    .name-block h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a2a3a;
+      line-height: 1.1;
+    }
+
+    .name-block .subtitle {
+      font-size: 13px;
+      color: #e07b39;
+      font-weight: 600;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #1a2a3a;
+      border-bottom: 2px solid #e07b39;
+      padding-bottom: 3px;
+      margin-bottom: 8px;
+    }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .exp-dates {
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+      padding-top: 2px;
+      line-height: 1.5;
+    }
+
+    .exp-body {}
+
+    .exp-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a2a3a;
+    }
+
+    .exp-company {
+      font-size: 12px;
+      color: #e07b39;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .exp-desc {
+      font-size: 11.5px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .exp-desc li {
+      margin-left: 14px;
+      margin-bottom: 2px;
+    }
+
+    .edu-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .edu-year {
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+      padding-top: 2px;
+    }
+
+    .edu-degree {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a2a3a;
+    }
+
+    .edu-school {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .profile-text {
+      font-size: 12.5px;
+      color: #444;
+      line-height: 1.6;
+      background: #f8f8f8;
+      border-left: 3px solid #e07b39;
+      padding: 10px 14px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    @media print {
+      body { background: none; }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        width: 100%;
+        min-height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ LEFT ══ -->
+  <div class="left">
+
+    <!-- Photo -->
+    <div class="photo-wrap">
+      <img src="photo_head.jpg" alt="Photo" class="photo">
+    </div>
+
+    <!-- Contact -->
+    <div>
+      <div class="left-section-title">Contact</div>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <span>Grenoble, 38000</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <span>07.61.77.99.91</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">✉️</span>
+        <span>dsalibekovi@gmail.com</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">🌐</span>
+        <span>omnixx.fr</span>
+      </div>
+    </div>
+
+    <!-- Compétences -->
+    <div>
+      <div class="left-section-title">Compétences</div>
+
+      <div class="skill-bar-wrap">
+        <div class="skill-label">Management d'équipe <span class="skill-level">Expert</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-label">Relation client <span class="skill-level">Expert</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-label">Gestion opérationnelle <span class="skill-level">Avancé</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-label">Automatisation & IA <span class="skill-level">Avancé</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-label">Création web <span class="skill-level">Intermédiaire</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:70%"></div></div>
+      </div>
+    </div>
+
+    <!-- Langues -->
+    <div>
+      <div class="left-section-title">Langues</div>
+
+      <div class="lang-item">
+        <div class="lang-name">Français <span class="lang-level">— Courant</span></div>
+        <div class="lang-dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+        </div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Anglais <span class="lang-level">— Courant</span></div>
+        <div class="lang-dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+        </div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Russe <span class="lang-level">— Natif</span></div>
+        <div class="lang-dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+        </div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Géorgien <span class="lang-level">— Natif</span></div>
+        <div class="lang-dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divers -->
+    <div>
+      <div class="left-section-title">Divers</div>
+      <div>
+        <span class="tag">🚗 Permis B</span>
+        <span class="tag">Véhiculé</span>
+        <span class="tag">Disponible rapidement</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ RIGHT ══ -->
+  <div class="right">
+
+    <!-- Nom & titre -->
+    <div class="name-block">
+      <h1>Davit<br>Salibekovi</h1>
+      <div class="subtitle">Manager Polyvalent &nbsp;·&nbsp; Restauration &nbsp;·&nbsp; Hôtellerie &nbsp;·&nbsp; Digital</div>
+    </div>
+
+    <!-- Profil -->
+    <div>
+      <div class="section-title">Profil</div>
+      <div class="profile-text">
+        Professionnel polyvalent avec 12 ans d'expérience en restauration et hôtellerie, alliant leadership opérationnel et maîtrise des outils digitaux. Fondateur de deux structures indépendantes, je suis reconnu pour ma capacité à comprendre rapidement les besoins, à gérer des équipes et à apporter des solutions concrètes. À l'aise dans des environnements exigeants, je cherche une mission où la réflexion et l'initiative font la différence.
+      </div>
+    </div>
+
+    <!-- Expérience -->
+    <div>
+      <div class="section-title">Expérience Professionnelle</div>
+
+      <div class="exp-item">
+        <div class="exp-dates">2025 – présent</div>
+        <div class="exp-body">
+          <div class="exp-title">Fondateur & Dirigeant</div>
+          <div class="exp-company">Omnixx.fr — Grenoble</div>
+          <ul class="exp-desc">
+            <li>Automatisation de processus B2B et B2C (n8n, IA)</li>
+            <li>Création de sites web et chatbots intelligents</li>
+            <li>Déploiement de réceptionnistes IA pour entreprises</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dates">2024 – présent</div>
+        <div class="exp-body">
+          <div class="exp-title">Gérant & Fondateur</div>
+          <div class="exp-company">Istante Pizza — Grenoble</div>
+          <ul class="exp-desc">
+            <li>Création et gestion autonome du restaurant</li>
+            <li>Management d'équipe, gestion des stocks et fournisseurs</li>
+            <li>Développement de la clientèle et fidélisation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dates">2022 – 2024</div>
+        <div class="exp-body">
+          <div class="exp-title">Chef de Partie</div>
+          <div class="exp-company">Restaurant Au Bureau — Grenoble</div>
+          <ul class="exp-desc">
+            <li>Responsable d'un poste en cuisine en environnement de volume</li>
+            <li>Coordination avec l'équipe de salle et encadrement de commis</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dates">2019 – 2020</div>
+        <div class="exp-body">
+          <div class="exp-title">Réceptionniste</div>
+          <div class="exp-company">Logis Hôtel Trois Massifs</div>
+          <ul class="exp-desc">
+            <li>Accueil et gestion des clients en français et anglais</li>
+            <li>Gestion des réservations et satisfaction client</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dates">2017 – 2019</div>
+        <div class="exp-body">
+          <div class="exp-title">Cuisinier</div>
+          <div class="exp-company">Trait Alpes — Grenoble</div>
+          <ul class="exp-desc">
+            <li>Production culinaire, respect des normes HACCP</li>
+            <li>Travail en brigade, polyvalence des postes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formation -->
+    <div>
+      <div class="section-title">Formation</div>
+      <div class="edu-item">
+        <div class="edu-year">2025</div>
+        <div>
+          <div class="edu-degree">Autoformation — IA, Automatisation & Développement Web</div>
+          <div class="edu-school">Freelance / Autodidacte (No-Code, Low-Code, Chatbots)</div>
+        </div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-year">2024</div>
+        <div>
+          <div class="edu-degree">Licence de Vente d'Alcool</div>
+          <div class="edu-school">Grand Restaurant — Grenoble</div>
+        </div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-year">2018</div>
+        <div>
+          <div class="edu-degree">Formation HACCP</div>
+          <div class="edu-school">Règles et normes d'hygiène alimentaire</div>
+        </div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-year">2017</div>
+        <div>
+          <div class="edu-degree">Diplôme de Cuisine</div>
+          <div class="edu-school">Lycée de l'Hôtellerie Clos d'Or — Grenoble</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
