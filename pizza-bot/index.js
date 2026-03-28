@@ -36,6 +36,37 @@ async function createSumUpPaymentLink(name, total) {
 
 
 
+async function getOrCreateContact(phone, name) {
+  // Try to get existing contact by phone
+  const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
+    headers: { "api-key": BREVO_API_KEY },
+  });
+
+  if (search.ok) {
+    const contact = await search.json();
+    const orderCount = (contact.attributes.ORDER_COUNT || 0) + 1;
+    // Update order count
+    await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
+      method: "PUT",
+      headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ attributes: { ORDER_COUNT: orderCount } }),
+    });
+    return orderCount;
+  } else {
+    // Create new contact
+    await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: phone + "@noemail.com",
+        attributes: { FIRSTNAME: name, SMS: phone, ORDER_COUNT: 1 },
+        updateEnabled: true,
+      }),
+    });
+    return 1;
+  }
+}
+
 async function sendToTelegram(message) {
   const url = "https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage";
   const response = await fetch(url, {
@@ -62,20 +93,22 @@ app.post("/webhook/order", async (req, res) => {
   await sendToTelegram(message);
 
   if (phone) {
+    const orderCount = await getOrCreateContact(phone, name);
     const paymentLink = await createSumUpPaymentLink(name, total);
     const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\n${paymentLink ? "Paiement: " + paymentLink + "\n" : ""}Tel: 04 38 49 27 35`;
     await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
       method: "POST",
-      headers: {
-        "api-key": BREVO_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: "ist1tePizza",
-        recipient: phone,
-        content: sms,
-      }),
+      headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ sender: "ist1tePizza", recipient: phone, content: sms }),
     });
+    if (orderCount === 11) {
+      const smsFree = `Istante Pizza\nBravo ${name}! C'est votre 11e commande. Une pizza offerte a votre prochaine visite ! Tel: 04 38 49 27 35`;
+      await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
+        method: "POST",
+        headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ sender: "ist1tePizza", recipient: phone, content: smsFree }),
+      });
+    }
   }
 
   res.json({ success: true });
