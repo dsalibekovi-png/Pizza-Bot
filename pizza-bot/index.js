@@ -45,7 +45,7 @@ async function getOrCreateContact(phone, name, pizza_count) {
   if (search.ok) {
     const contact = await search.json();
     const newCount = (contact.attributes.ORDER_COUNT || 0) + pizza_count;
-    await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phoneClean), {
+    await fetch("https://api.brevo.com/v3/contacts/" + contact.id, {
       method: "PUT",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({ attributes: { ORDER_COUNT: newCount } }),
