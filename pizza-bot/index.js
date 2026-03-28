@@ -5,9 +5,7 @@ app.use(express.json());
 const TELEGRAM_TOKEN = "8385465224:AAE7k1qxCjJ8SKG2BXleFPqaJIUPWJRF7NQ";
 const TELEGRAM_CHAT_ID = "-5161585152";
 
-const twilio = require("twilio");
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-const TWILIO_FROM = process.env.TWILIO_FROM_NUMBER;
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 
 
@@ -46,7 +44,18 @@ app.post("/webhook/order", async (req, res) => {
 
   if (phone) {
     const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\nTel: 04 38 49 27 35`;
-    await twilioClient.messages.create({ body: sms, from: TWILIO_FROM, to: phone });
+    await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
+      method: "POST",
+      headers: {
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: "ist1tePizza",
+        recipient: phone,
+        content: sms,
+      }),
+    });
   }
 
   res.json({ success: true });
