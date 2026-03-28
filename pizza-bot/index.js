@@ -36,34 +36,31 @@ async function createSumUpPaymentLink(name, total) {
 
 
 
-async function getOrCreateContact(phone, name) {
-  // Try to get existing contact by phone
+async function getOrCreateContact(phone, name, pizza_count) {
   const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
     headers: { "api-key": BREVO_API_KEY },
   });
 
   if (search.ok) {
     const contact = await search.json();
-    const orderCount = (contact.attributes.ORDER_COUNT || 0) + 1;
-    // Update order count
+    const newCount = (contact.attributes.ORDER_COUNT || 0) + pizza_count;
     await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
       method: "PUT",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ attributes: { ORDER_COUNT: orderCount } }),
+      body: JSON.stringify({ attributes: { ORDER_COUNT: newCount } }),
     });
-    return orderCount;
+    return newCount;
   } else {
-    // Create new contact
     await fetch("https://api.brevo.com/v3/contacts", {
       method: "POST",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({
         email: phone + "@noemail.com",
-        attributes: { FIRSTNAME: name, SMS: phone, ORDER_COUNT: 1 },
+        attributes: { FIRSTNAME: name, SMS: phone, ORDER_COUNT: pizza_count },
         updateEnabled: true,
       }),
     });
-    return 1;
+    return pizza_count;
   }
 }
 
@@ -87,13 +84,14 @@ app.post("/webhook/order", async (req, res) => {
   const type = req.body.type;
   const phone = req.body.phone;
   const total = req.body.total;
+  const pizza_count = parseInt(req.body.pizza_count) || 1;
 
   const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€";
 
   await sendToTelegram(message);
 
   if (phone) {
-    const orderCount = await getOrCreateContact(phone, name);
+    const orderCount = await getOrCreateContact(phone, name, pizza_count);
     const paymentLink = await createSumUpPaymentLink(name, total);
     const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\n${paymentLink ? "Paiement: " + paymentLink + "\n" : ""}Tel: 04 38 49 27 35`;
     await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
