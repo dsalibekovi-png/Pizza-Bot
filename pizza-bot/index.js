@@ -63,7 +63,7 @@ app.post("/voice", async (_req, res) => {
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
-    <Stream url="wss://api.elevenlabs.io/v1/convai/twilio?agent_id=${process.env.ELEVENLABS_AGENT_ID}">
+    <Stream url="wss://api.elevenlabs.io/v1/convai/twilio?agent_id=${process.env.ELEVENLABS_AGENT_ID}&amp;xi-api-key=${process.env.ELEVENLABS_API_KEY}">
       <Parameter name="current_time" value="${now}"/>
     </Stream>
   </Connect>
