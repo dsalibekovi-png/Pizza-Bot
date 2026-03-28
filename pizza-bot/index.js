@@ -86,7 +86,7 @@ app.post("/webhook/order", async (req, res) => {
   const total = req.body.total;
   const pizza_count = parseInt(req.body.pizza_count) || 1;
 
-  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€";
+  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€\nPizzas: " + pizza_count;
 
   await sendToTelegram(message);
 
