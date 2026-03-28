@@ -37,7 +37,7 @@ async function createSumUpPaymentLink(name, total) {
 
 
 async function getOrCreateContact(phone, name, pizza_count) {
-  const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone), {
+  const search = await fetch("https://api.brevo.com/v3/contacts/" + encodeURIComponent(phone) + "?includeAttributes=true", {
     headers: { "api-key": BREVO_API_KEY },
   });
 
