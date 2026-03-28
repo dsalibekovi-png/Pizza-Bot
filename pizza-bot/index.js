@@ -84,7 +84,8 @@ app.post("/webhook/order", async (req, res) => {
   const type = req.body.type;
   const phone = req.body.phone;
   const total = req.body.total;
-  const pizza_count = (items.match(/\d+/g) || []).reduce((sum, n) => sum + parseInt(n), 0) || 1;
+  const numbers = (items.match(/\d+/g) || []).reduce((sum, n) => sum + parseInt(n), 0);
+  const pizza_count = numbers > 0 ? numbers : (items.split(",").length);
 
   const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€\nPizzas: " + pizza_count;
 
