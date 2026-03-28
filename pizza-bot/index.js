@@ -52,6 +52,36 @@ app.post("/webhook/order", async (req, res) => {
   res.json({ success: true });
 });
 
+app.post("/voice", async (_req, res) => {
+  const now = new Date().toLocaleTimeString("fr-FR", {
+    timeZone: "Europe/Paris",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const tokenRes = await fetch(
+    `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=${process.env.ELEVENLABS_AGENT_ID}`,
+    {
+      method: "GET",
+      headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY },
+    }
+  );
+  const tokenData = await tokenRes.json();
+
+  const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Connect>
+    <Stream url="wss://api.elevenlabs.io/v1/convai/twilio?agent_id=${process.env.ELEVENLABS_AGENT_ID}&amp;token=${tokenData.token}">
+      <Parameter name="current_time" value="${now}"/>
+    </Stream>
+  </Connect>
+</Response>`;
+
+  res.set("Content-Type", "text/xml");
+  res.send(twiml);
+});
+
 app.listen(3000, function() {
   console.log("Server running on port 3000");
 });
