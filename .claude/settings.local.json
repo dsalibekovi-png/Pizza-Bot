@@ -12,7 +12,8 @@
       "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'', environment: BrevoEnvironment.Production }\\); console.log\\(typeof b.transactionalSMS\\)\")",
       "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'', environment: BrevoEnvironment.Production }\\); console.log\\(Object.keys\\(b\\)\\)\")",
       "Bash(grep -r \"transactionalSms\\\\|sms\\\\|Sms\" 'c:\\\\Users\\\\Dav\\\\Project X\\\\pizza-bot\\\\node_modules\\\\@getbrevo\\\\brevo\\\\dist\\\\cjs' --include=*.js -l)",
-      "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'' }\\); const p = Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(b\\)\\); console.log\\(p\\)\")"
+      "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'' }\\); const p = Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(b\\)\\); console.log\\(p\\)\")",
+      "WebFetch(domain:elevenlabs.io)"
     ],
     "defaultMode": "bypassPermissions"
   }

@@ -52,6 +52,16 @@ app.post("/webhook/order", async (req, res) => {
   res.json({ success: true });
 });
 
+app.get("/get-time", (_req, res) => {
+  const now = new Date().toLocaleTimeString("fr-FR", {
+    timeZone: "Europe/Paris",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  res.json({ current_time: now });
+});
+
 app.post("/voice", async (_req, res) => {
   const now = new Date().toLocaleTimeString("fr-FR", {
     timeZone: "Europe/Paris",
