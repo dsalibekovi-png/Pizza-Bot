@@ -87,14 +87,14 @@ app.post("/webhook/order", async (req, res) => {
   const numbers = (items.match(/\d+/g) || []).reduce((sum, n) => sum + parseInt(n), 0);
   const pizza_count = numbers > 0 ? numbers : (items.split(",").length);
 
-  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone + "\nTotal: " + total + "€\nPizzas: " + pizza_count;
+  const message = "<b>NOUVELLE COMMANDE!</b>\n\nClient: " + name + "\nCommande: " + items + "\nType: " + type + "\nTelephone: " + phone;
 
   await sendToTelegram(message);
 
   if (phone) {
     const orderCount = await getOrCreateContact(phone, name, pizza_count);
     const paymentLink = await createSumUpPaymentLink(name, total);
-    const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type} - ${total}EUR\n${paymentLink ? "Paiement: " + paymentLink + "\n" : ""}Tel: 04 38 49 27 35`;
+    const sms = `Istante Pizza\nMerci ${name}! Commande recue:\n${items}\n${type}\n${paymentLink ? "Paiement: " + paymentLink + "\n" : ""}Tel: 04 38 49 27 35`;
     await fetch("https://api.brevo.com/v3/transactionalSMS/sms", {
       method: "POST",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
