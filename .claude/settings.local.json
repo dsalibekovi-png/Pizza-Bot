@@ -5,7 +5,14 @@
       "Bash(npx @playwright/mcp@latest --version)",
       "Bash(node -e \":*)",
       "Bash(node generate_pdf.js)",
-      "Bash(curl -s -X POST https://pizza-bot-production.up.railway.app/webhook/order -H \"Content-Type: application/json\" -d '{\"\"name\"\":\"\"Davit\"\",\"\"items\"\":\"\"1x Margherita, 1x Coca-Cola\"\",\"\"type\"\":\"\"livraison\"\",\"\"phone\"\":\"\"+33761779991\"\",\"\"total\"\":\"\"18.50\"\"}')"
+      "Bash(curl -s -X POST https://pizza-bot-production.up.railway.app/webhook/order -H \"Content-Type: application/json\" -d '{\"\"name\"\":\"\"Davit\"\",\"\"items\"\":\"\"1x Margherita, 1x Coca-Cola\"\",\"\"type\"\":\"\"livraison\"\",\"\"phone\"\":\"\"+33761779991\"\",\"\"total\"\":\"\"18.50\"\"}')",
+      "Bash(node -e \"const b = require\\(''@getbrevo/brevo''\\); console.log\\(Object.keys\\(b\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''sms''\\)\\)\\)\")",
+      "Bash(node -e \"const b = require\\(''@getbrevo/brevo''\\); console.log\\(Object.keys\\(b\\).slice\\(0,20\\)\\)\")",
+      "Bash(node -e \"const { Brevo } = require\\(''@getbrevo/brevo''\\); const b = new Brevo\\({ apiKey: ''test'' }\\); console.log\\(Object.keys\\(b\\).slice\\(0,15\\)\\)\")",
+      "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'', environment: BrevoEnvironment.Production }\\); console.log\\(typeof b.transactionalSMS\\)\")",
+      "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'', environment: BrevoEnvironment.Production }\\); console.log\\(Object.keys\\(b\\)\\)\")",
+      "Bash(grep -r \"transactionalSms\\\\|sms\\\\|Sms\" 'c:\\\\Users\\\\Dav\\\\Project X\\\\pizza-bot\\\\node_modules\\\\@getbrevo\\\\brevo\\\\dist\\\\cjs' --include=*.js -l)",
+      "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'' }\\); const p = Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(b\\)\\); console.log\\(p\\)\")"
     ],
     "defaultMode": "bypassPermissions"
   }
