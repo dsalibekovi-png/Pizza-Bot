@@ -13,7 +13,13 @@
       "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'', environment: BrevoEnvironment.Production }\\); console.log\\(Object.keys\\(b\\)\\)\")",
       "Bash(grep -r \"transactionalSms\\\\|sms\\\\|Sms\" 'c:\\\\Users\\\\Dav\\\\Project X\\\\pizza-bot\\\\node_modules\\\\@getbrevo\\\\brevo\\\\dist\\\\cjs' --include=*.js -l)",
       "Bash(node -e \"const { BrevoClient, BrevoEnvironment } = require\\(''@getbrevo/brevo''\\); const b = new BrevoClient\\({ apiKey: ''test'' }\\); const p = Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(b\\)\\); console.log\\(p\\)\")",
-      "WebFetch(domain:elevenlabs.io)"
+      "WebFetch(domain:elevenlabs.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s -X GET \"https://api.sumup.com/v0.1/ecom/products\" -H \"Authorization: Bearer sup_sk_LMiO2c1r21T3sUu5aCfKniXsvPUWdLxhE\")",
+      "Bash(curl -s -X GET \"https://api.sumup.com/v0.1/merchants/MP7658A9/products?limit=50\" -H \"Authorization: Bearer sup_sk_LMiO2c1r21T3sUu5aCfKniXsvPUWdLxhE\")",
+      "Bash(curl -s -X GET \"https://api.sumup.com/v1.0/merchants/MP7658A9/catalog/products\" -H \"Authorization: Bearer sup_sk_LMiO2c1r21T3sUu5aCfKniXsvPUWdLxhE\")",
+      "Bash(curl -s -X GET \"https://api.sumup.com/v0.1/merchants/MP7658A9/locations\" -H \"Authorization: Bearer sup_sk_LMiO2c1r21T3sUu5aCfKniXsvPUWdLxhE\")"
     ],
     "defaultMode": "bypassPermissions"
   }
